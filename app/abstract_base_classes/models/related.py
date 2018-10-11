@@ -1,7 +1,7 @@
 from django.db import models
 
 __all__ = (
-    'Person',
+    'RelatedUser',
     'PhotoPost',
     'TextPost',
 
@@ -10,7 +10,7 @@ __all__ = (
 
 
 
-class Person(models.Model):
+class RelatedUser(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
@@ -19,7 +19,7 @@ class Person(models.Model):
 
 class PostBase(models.Model):
     author = models.ForeignKey(
-        Person,
+        RelatedUser,
         on_delete=models.CASCADE,
         # 유저(Person) 입장에서
         # 자신이 특정 Post의 'author'인 경웨 해당하는 모든 PostBase객체를 참조하는 역방향 매니저 이
