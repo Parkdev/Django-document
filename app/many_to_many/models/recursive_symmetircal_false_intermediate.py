@@ -6,6 +6,7 @@ __all__ = (
     'Relation',
 )
 
+
 class TwitterUser(models.Model):
     """
     특정 유저가 다른 유저를 (인스터트 메서드)
@@ -37,6 +38,7 @@ class TwitterUser(models.Model):
         through='Relation',
         symmetrical=False,
     )
+
     def __str__(self):
         return self.name
 
@@ -46,10 +48,9 @@ class TwitterUser(models.Model):
 
         :return: 나를 follow하는 다른 TwitterUser Queryset
         """
-        result = TwitterUser.objects.filter(
+        return TwitterUser.objects.filter(
             from_user_relation__to_user=self,
             from_user_relation__relation_type='f')
-        return result
 
     @property
     def block_list(self):
@@ -57,32 +58,37 @@ class TwitterUser(models.Model):
 
         :return: 내가 block하는 다른 TwitterUser Queryset
         """
-        result = TwitterUser.objects.filter(
+        return TwitterUser.objects.filter(
             to_user_relation__from_user=self,
             to_user_relation__relation_type='b')
-        return result
-
 
     def follow(self, user):
         """
         user를 follow하는 Relation을 생성
         이미 존재한다면 만들지 않는다.
         :param user:  TwitterUser
-        :return: tuple(Relation instance, created(생성여부 True/False))
+        :return: tuple(Relation instance
         """
         # Relation.objects.create(from_user = u4, to_user = u1, relation_type = 'f')
-        if not TwitterUser.objects.filter(
-                to_user_relation__from_user = self,
-                to_user_relation__to_user=user,
-                to_user_relation__relation_type ='f',
-        ):
-            result = Relation.objects.create(
-                from_user=self,
+        # if not TwitterUser.objects.filter(
+        #         to_user_relation__from_user = self,
+        #         to_user_relation__to_user=user,
+        #         to_user_relation__relation_type ='f',
+        # ):
+        if not self.from_user_relations.filter(to_user=user).exist():
+            # result = Relation.objects.create(
+            #     from_user=self,
+            #     to_user=user,
+            #     relation_type='f')
+            # return result
+            self.from_user_relations.create(
                 to_user=user,
-                relation_type='f')
-            return result
-        else:
-            print('이미 등록되어습니다.')
+                relation_type='f',
+            )
+            created = True
+        return self.from_user_relations.get(to_user=user)
+        # else:
+        #     print('이미 등록되어습니다.')
 
     def block(self, user):
         """
@@ -92,33 +98,47 @@ class TwitterUser(models.Model):
         :param user: TwitterUser
         :return: tuple(Relation instance, created(생성여부 True/False))
         """
-        if not TwitterUser.objects.filter(
-                to_user_relation__from_user = self,
-                to_user_relation__to_user=user,
-                to_user_relation__relation_type ='b',
-        ):
-            result = Relation.objects.create(
-                from_user=self,
-                to_user=user,
-                relation_type='b')
-            return result
-        elif TwitterUser.objects.filter(
-                to_user_relation__from_user = self,
-                to_user_relation__to_user=user,
-                to_user_relation__relation_type ='f',
-        ):
-            TwitterUser.objects.filter(
-                to_user_relation__from_user=self,
-                to_user_relation__to_user=user,
-                to_user_relation__relation_type='f',
-            ).delete()
-            result = Relation.objects.create(
-                from_user=self,
-                to_user=user,
-                relation_type='b')
-            return result
-        else:
-            print('이미 등록되어습니다.')
+        try:
+            # Relation이 존재함
+            relation = self.from_user_relations.get(to_user=user)
+            if relation.relation_type == 'f':
+                relation.relation_type: 'b'
+                relation.created_at = timezone.now()
+                relation.save()
+
+
+        except Relation.DoesNotExist:
+            # Relation이 없다. 새로 생성 후 생성여부 값에 True할당
+            relation = self.from_user_relations.create(to_user=user, relation_type='b')
+            created = True
+        return relation
+        # if not TwitterUser.objects.filter(
+        #         to_user_relation__from_user = self,
+        #         to_user_relation__to_user=user,
+        #         to_user_relation__relation_type ='b',
+        # ):
+        #     result = Relation.objects.create(
+        #         from_user=self,
+        #         to_user=user,
+        #         relation_type='b')
+        #     return result
+        # elif TwitterUser.objects.filter(
+        #         to_user_relation__from_user = self,
+        #         to_user_relation__to_user=user,
+        #         to_user_relation__relation_type ='f',
+        # ):
+        #     TwitterUser.objects.filter(
+        #         to_user_relation__from_user=self,
+        #         to_user_relation__to_user=user,
+        #         to_user_relation__relation_type='f',
+        #     ).delete()
+        #     result = Relation.objects.create(
+        #         from_user=self,
+        #         to_user=user,
+        #         relation_type='b')
+        #     return result
+        # else:
+        #     print('이미 등록되어습니다.')
 
     @property
     def follower_relations(self):
@@ -126,6 +146,7 @@ class TwitterUser(models.Model):
 
         :return: 나를 follow하는 Relation QuerySet
         """
+
     @property
     def followee_relations(self):
         """
@@ -160,7 +181,7 @@ class Relation(models.Model):
         related_query_name='to_user_relation',
     )
     relation_type = models.CharField(
-        choices = CHOICES_RELATION_TYPE,
+        choices=CHOICES_RELATION_TYPE,
         max_length=1,
     )
     created_at = models.DateTimeField(auto_now_add=True)
