@@ -8,7 +8,7 @@ from django.db import models
 
 # Create your models here.
 __all__ = (
-    'ComminInfo'
+    'CommonInfo'
     'Student'
 )
 
