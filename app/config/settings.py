@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'many_to_many',
     'one_to_one',
     'abstract_base_classes',
+    'abc_other',
 
     'django.contrib.admin',
     'django.contrib.auth',
