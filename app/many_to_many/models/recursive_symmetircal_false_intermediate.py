@@ -146,6 +146,8 @@ class TwitterUser(models.Model):
 
         :return: 나를 follow하는 Relation QuerySet
         """
+        return self.to_user_relaiton.filter(relation_type='f')
+
 
     @property
     def followee_relations(self):
@@ -153,6 +155,7 @@ class TwitterUser(models.Model):
 
         :return: 내가 follow하는 Relation Queryset
         """
+        return self.from_user_relation.filter(relation_type='f')
 
 
 class Relation(models.Model):
@@ -185,3 +188,14 @@ class Relation(models.Model):
         max_length=1,
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    # 증간테이블은
+    # 관계뿐만아니라
+    # 날짜같은
+    # 추가데이터를
+    # 기입하기위해
+    # 필요하다
+
+    class Meta:
+        unique_together = (
+            ('from_user', 'to_user'),
+        )
