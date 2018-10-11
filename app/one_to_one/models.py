@@ -19,7 +19,7 @@ class Restaurant(models.Model):
     serves_pizza = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self,place.name} the restaurant'
+        return f'{self.place.name} the restaurant'
 
 class Waiter(models.Model):
     restaurant = models.ForeignKey(

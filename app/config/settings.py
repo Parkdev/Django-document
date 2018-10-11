@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'foreignKey',
     'many_to_many',
     'one_to_one',
+    'abstract_base_classes',
 
     'django.contrib.admin',
     'django.contrib.auth',
