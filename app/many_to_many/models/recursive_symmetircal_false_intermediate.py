@@ -46,7 +46,7 @@ class TwitterUser(models.Model):
 
         :return: 나를 follow하는 다른 TwitterUser Queryset
         """
-        pass
+
 
     @property
     def block_list(self):
