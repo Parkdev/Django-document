@@ -23,14 +23,16 @@ class PostBase(models.Model):
         on_delete=models.CASCADE,
         # 유저(Person) 입장에서
         # 자신이 특정 Post의 'author'인 경웨 해당하는 모든 PostBase객체를 참조하는 역방향 매니저 이
-        related_name='posts',
-    )
+        related_name='%(class)s_set',
+        related_query_name='%(class)s',
+    ) # '%(class)s'는 상속받은 클래스 이름을 따라간다.
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         abstract = True
 
 class PhotoPost(PostBase):
+    #related_name ='photopost_set
     photo_url = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
