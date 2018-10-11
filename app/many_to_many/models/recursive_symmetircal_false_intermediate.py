@@ -46,7 +46,10 @@ class TwitterUser(models.Model):
 
         :return: 나를 follow하는 다른 TwitterUser Queryset
         """
-        pass
+        result = TwitterUser.objects.filter(
+            from_user_relation__to_user=self,
+            from_user_relation__relation_type='f')
+        return result
 
     @property
     def block_list(self):
@@ -54,7 +57,11 @@ class TwitterUser(models.Model):
 
         :return: 내가 block하는 다른 TwitterUser Queryset
         """
-        pass
+        result = TwitterUser.objects.filter(
+            to_user_relation__from_user=self,
+            to_user_relation__relation_type='b')
+        return result
+
 
     def follow(self, user):
         """
@@ -63,7 +70,19 @@ class TwitterUser(models.Model):
         :param user:  TwitterUser
         :return: tuple(Relation instance, created(생성여부 True/False))
         """
-        pass
+        # Relation.objects.create(from_user = u4, to_user = u1, relation_type = 'f')
+        if not TwitterUser.objects.filter(
+                to_user_relation__from_user = self,
+                to_user_relation__to_user=user,
+                to_user_relation__relation_type ='f',
+        ):
+            result = Relation.objects.create(
+                from_user=self,
+                to_user=user,
+                relation_type='f')
+            return result
+        else:
+            print('이미 등록되어습니다.')
 
     def block(self, user):
         """
@@ -73,7 +92,33 @@ class TwitterUser(models.Model):
         :param user: TwitterUser
         :return: tuple(Relation instance, created(생성여부 True/False))
         """
-        pass
+        if not TwitterUser.objects.filter(
+                to_user_relation__from_user = self,
+                to_user_relation__to_user=user,
+                to_user_relation__relation_type ='b',
+        ):
+            result = Relation.objects.create(
+                from_user=self,
+                to_user=user,
+                relation_type='b')
+            return result
+        elif TwitterUser.objects.filter(
+                to_user_relation__from_user = self,
+                to_user_relation__to_user=user,
+                to_user_relation__relation_type ='f',
+        ):
+            TwitterUser.objects.filter(
+                to_user_relation__from_user=self,
+                to_user_relation__to_user=user,
+                to_user_relation__relation_type='f',
+            ).delete()
+            result = Relation.objects.create(
+                from_user=self,
+                to_user=user,
+                relation_type='b')
+            return result
+        else:
+            print('이미 등록되어습니다.')
 
     @property
     def follower_relations(self):
