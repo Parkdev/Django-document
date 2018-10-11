@@ -7,6 +7,10 @@
 from django.db import models
 
 # Create your models here.
+__all__ = (
+    'ComminInfo'
+    'Student'
+)
 
 class CommonInfo(models.Model):
     name = models.CharField(max_length=100, db_index=True)
