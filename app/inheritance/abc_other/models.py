@@ -1,5 +1,4 @@
-from django.db import models
-from abstract_base_classes.models import PostBase
+from inheritance.abstract_base_classes.models import PostBase
 
 # Create your models here.
 
