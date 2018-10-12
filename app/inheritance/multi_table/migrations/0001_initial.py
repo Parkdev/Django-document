@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Restaurant1',
             fields=[
-                ('place1_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='multi_table.Place1')),
+                ('place_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='multi_table.Place1')),
                 ('serves_hot_dogs', models.BooleanField(default=False)),
                 ('serves_pizza', models.BooleanField(default=False)),
             ],

@@ -30,6 +30,12 @@ class Restaurant1(Place1):
     # place_ptr = models.OneToOneField(Place1, parent_link=True, primary_key=True)
     serves_hot_dogs = models.BooleanField(default=False)
     serves_pizza = models.BooleanField(default=False)
+    place_ptr = models.OneToOneField(
+        Place1,
+        primary_key=True,
+        parent_link=True,
+        on_delete=models.CASCADE,
+    )
 
     #OTO으로 구현할 내용이 아님 OTO -> Foreignkey
     old_place = models.ForeignKey(
