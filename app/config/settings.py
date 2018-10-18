@@ -35,7 +35,9 @@ INSTALLED_APPS = [
     'relation.foreignKey',
     'relation.many_to_many',
     'relation.one_to_one',
-    
+
+    'weblog',
+
     'inheritance.abstract_base_classes',
     'inheritance.abc_other',
     'inheritance.multi_table',
